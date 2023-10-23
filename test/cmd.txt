@@ -1,0 +1,3 @@
+./build.sh --arm
+
+docker run -d --name chatbot -e OAI_ACCESS_TOKEN="xxx" -e WS_ENDPOINT="wss://xxx" -p 3600:3000 oydeu/dc-chatbot

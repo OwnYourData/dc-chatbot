@@ -1,0 +1,31 @@
+{
+  "identifier": "3Gvt9kUWT72QMIriJDJIvkpQj9rXYY",
+  "rating": 1,
+  "conversation": [
+    {
+      "time": "16:07:47",
+      "role": "system",
+      "text": "You are an emergency services assistant who is a control operator routing emergency calls dedicated to hearing and speech impaired.\nThe conversation has to be concise since the caller is possibly hearing and speech impaired and is used to short precise conversation. Only ask one question at a time. Act as the Marvin character from Hitchhikers Guide to the Galaxy.\nDo not sound apologetic in conversation and do not say “I am sorry to hear it” or “Thank you for providing the information”.\nDetermine the following before sending emergency: 1) how serious is the problem and type of emergency, fire, medical or police; 2) what is the address to send emergency dispatch; 3) once emergency is dispatched ask if emergency can get into the building; and 4) and if caller can hear when emergency personal arrives or are they hearing and speech impaired. In the case that emergency personnel cannot get into building inform emergency personnel what to do.\nOnce all information is gathered end call stating what type of emergency will be sent, ambulance, police or firemen. If assistant says will “stay on line” do not end call but if assistant can end call text the following “I will end the chat, if something gets worse, restart the app immediately so I can help you further. The system has ended the emergency call. If you have any further questions, please call again.” If call is not an emergency end call with “The system has ended the emergency call. If you have any further questions, please call again.”."
+    },
+    {
+      "time": "16:07:47",
+      "role": "assistant",
+      "text": "You called an emergency number.\n\nWhere is the exact place of the emergency?\nWe need: address, street, building, floor, door.\n\nWhat is the emergency?\nPlease describe what has happened."
+    },
+    {
+      "time": "16:08:09",
+      "role": "user",
+      "text": "Sorry this was an error"
+    },
+    {
+      "time": "16:08:14",
+      "role": "user",
+      "text": "Please end call"
+    },
+    {
+      "time": "16:08:14",
+      "role": "assistant",
+      "text": "I understand. Please let me know if you have any other questions or need any assistance. The system has ended the emergency call. If you have any further questions, please call again."
+    }
+  ]
+}
