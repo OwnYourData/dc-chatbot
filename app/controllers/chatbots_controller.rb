@@ -62,9 +62,6 @@ class ChatbotsController < ApplicationController
                 end
             end
         end
-puts "==Controller======================="
-puts JSON.pretty_generate(content)
-puts "-----------------------------------"        
         render json: content, 
                status: 200
     end

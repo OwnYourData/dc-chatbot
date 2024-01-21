@@ -96,7 +96,6 @@ class WebSocketClient
             data = @client.readpartial(1024)
           end
         rescue Timeout::Error
-p "readpartial took longer than 20 seconds!"
         end
 
         if Time.now - last_heartbeat_time >= 10
@@ -113,9 +112,6 @@ p "readpartial took longer than 20 seconds!"
         end
         @frame << data
         while msg = @frame.next
-puts "~~received~~~~~~~~~~~~~~~~~~"
-puts JSON.pretty_generate(JSON.parse(msg.data))
-puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
           dat = JSON.parse(msg.data)
           write = false
           if !dat.nil?
@@ -207,9 +203,6 @@ puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
   def send_message(message)
     begin
-puts "~~send message~~~~~~~~~~~~~~"
-puts JSON.pretty_generate(JSON.parse(message))
-puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       frame = WebSocket::Frame::Outgoing::Client.new(version: @handshake.version, data: message, type: :text)
       @client.write(frame.to_s)
     rescue => error

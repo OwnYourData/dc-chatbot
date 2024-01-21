@@ -21,8 +21,12 @@ content:
         jurisdiction: String
         privacy_policy: String
         withdrawal_method: String
-        data_source: DataSubject
-        data_intermediary: DataSubject
+        data_controllers: set<DataSubject>
+        event_time: Date
+        event_type: String
+        event_state: String
+        event_duration: String
+        event_entity_id: String
     - name: Content
       attributes:
         attribute_id: String
@@ -150,11 +154,14 @@ content:
                   type: string
                 withdrawal_method:
                   type: string
-                data_source:
+                data_controllers:
                   type: array
                   items:
                     type: object
                     properties:
+                      party_role:
+                        type: string
+                        title: Role
                       party_id:
                         type: string
                         title: Identifier
@@ -167,23 +174,20 @@ content:
                       party_type:
                         type: string
                         title: Type
-                data_intermediary:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      party_id:
-                        type: string
-                        title: Identifier
-                      party_name:
-                        type: string
-                        title: Name
-                      party_address:
-                        type: string
-                        title: Address
-                      party_type:
-                        type: string
-                        title: Type
+                event_time:
+                  type: string
+                  format: "date-time"
+                event_type:
+                  type: string
+                  enum:
+                    - implicit
+                    - explicit
+                event_state:
+                  type: string
+                event_duration:
+                  type: string
+                event_entity_id:
+                  type: string
       ui:
         type: VerticalLayout
         elements:
@@ -204,11 +208,13 @@ content:
                     label: Description
                     options:
                       multi: true
-                  - type: Control
-                    scope: "#/properties/purpose_type"
-                    label: Purpose Type
-                  - type: Control
-                    scope: "#/properties/lawful_basis"
+                  - type: HorizontalLayout
+                    elements:
+                    - type: Control
+                      scope: "#/properties/purpose_type"
+                      label: Type
+                    - type: Control
+                      scope: "#/properties/lawful_basis"
                   - type: Control
                     scope: "#/properties/content"
                     label: "Content (click + to add an entry)"
@@ -231,31 +237,56 @@ content:
                 - type: Group
                   label: Processing
                   elements:
-                  - type: Control
-                    scope: "#/properties/processing_method"
-                    label: Method
-                  - type: Control
-                    scope: "#/properties/retention_period"
-                  - type: Control
-                    scope: "#/properties/storage_location"
-                    label: "Storage Location"
-                  - type: Control
-                    scope: "#/properties/geographic_restriction"
-                    label: "Geographic Restriction"
+                  - type: HorizontalLayout
+                    elements:
+                    - type: Control
+                      scope: "#/properties/processing_method"
+                      label: Method
+                    - type: Control
+                      scope: "#/properties/retention_period"
+                  - type: HorizontalLayout
+                    elements:
+                    - type: Control
+                      scope: "#/properties/storage_location"
+                      label: "Storage Location"
+                    - type: Control
+                      scope: "#/properties/geographic_restriction"
+                      label: "Geographic Restriction"
+                  - type: HorizontalLayout
+                    elements:
+                    - type: Control
+                      scope: "#/properties/service"
+                    - type: Control
+                      scope: "#/properties/jurisdiction"
+                  - type: HorizontalLayout
+                    elements:
+                    - type: Control
+                      scope: "#/properties/privacy_policy"
+                    - type: Control
+                      scope: "#/properties/withdrawal_method"
                   - type: Control
                     scope: "#/properties/recipient_third_party"
                     label: "Recipient Third Party (click + to add an entry)"
                   - type: Control
-                    scope: "#/properties/service"
+                    scope: "#/properties/data_controllers"
+                    label: "Data Controllers (click + to add an entry)"
+                - type: Group
+                  label: Event
+                  elements:
+                  - type: HorizontalLayout
+                    elements:
+                    - type: Control
+                      scope: "#/properties/event_time"
+                      label: "Date & Time"
+                    - type: Control
+                      scope: "#/properties/event_type"
+                      label: "Type"
+                    - type: Control
+                      scope: "#/properties/event_state"
+                      label: "State"
+                    - type: Control
+                      scope: "#/properties/event_duration"
+                      label: "Duration"
                   - type: Control
-                    scope: "#/properties/jurisdiction"
-                  - type: Control
-                    scope: "#/properties/privacy_policy"
-                - type: Control
-                  scope: "#/properties/withdrawal_method"
-                - type: Control
-                  scope: "#/properties/data_source"
-                  label: "Data Source (click + to add an entry)"
-                - type: Control
-                  scope: "#/properties/data_intermediary"
-                  label: "Data Intermediary (click + to add an entry)"
+                    scope: "#/properties/event_entity_id"
+                    label: "Entity"

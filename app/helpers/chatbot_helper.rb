@@ -168,9 +168,6 @@ module ChatbotHelper
 
         if !call_ended
             # if !test_call
-puts "==Conversation====================="
-puts JSON.pretty_generate(conv)
-puts "==================================="
                 oai_params = {
                       model: OAI_MODEL, 
                       messages: conv,
