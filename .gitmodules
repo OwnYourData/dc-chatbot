@@ -1,0 +1,3 @@
+[submodule "ng112-js-tester"]
+	path = ng112-js-tester
+	url = git@github.com:DEC112-private/ng112-js-tester.git
