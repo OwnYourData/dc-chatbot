@@ -5,6 +5,7 @@ REPOSITORY="oydeu"
 TAG="latest"
 
 # read commandline options
+BUILD_TEST=true
 BUILD_CLEAN=false
 DOCKER_UPDATE=false
 BUILD_ARM=false
@@ -14,6 +15,11 @@ DOCKERFILE="./docker/Dockerfile"
 
 while [ $# -gt 0 ]; do
     case "$1" in
+        --test*)
+            BUILD_TEST=TRUE
+            REPOSITORY="ghcr.io/oyd-private"
+            DOCKERFILE="${DOCKERFILE}-test"
+            ;;
         --clean*)
             BUILD_CLEAN=true
             ;;

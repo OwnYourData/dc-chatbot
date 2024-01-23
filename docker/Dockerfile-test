@@ -1,0 +1,29 @@
+FROM milvusdb/pytest
+LABEL org.opencontainers.image.authors="Christoph Fabianek <christoph@ownyourdata.eu>"
+
+WORKDIR /usr/src/app
+
+RUN pip install pytest-subprocess && \
+	apt-get update && \
+	apt-get install -y \
+		gettext-base \
+		ruby-full \
+		curl \
+		ca-certificates \
+		gnupg && \
+	mkdir -p /etc/apt/keyrings && \
+	curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | \
+		gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+	echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | \
+		tee /etc/apt/sources.list.d/nodesource.list && \
+	apt-get update && \
+	apt-get install nodejs -y && \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+	gem install rake
+
+COPY . .
+RUN cd ng112-js-tester && \
+	npm install && \
+	npm run build
+
+CMD ["bash"]

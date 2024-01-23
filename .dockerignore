@@ -1,2 +1,4 @@
 tmp
 kubernetes
+pytest/dist
+pytest/node_modules
