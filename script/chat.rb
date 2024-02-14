@@ -68,7 +68,8 @@ class WebSocketClient
       end
       if @handshake.valid?
         p "Connected successfully!"
-        send_message('{"method":"subscribe_new_calls"}')
+        msg = {method: 'subscribe_new_calls'}
+        send_message(msg.to_json)
         listen
         p "Connection ended"
       else
@@ -99,14 +100,19 @@ class WebSocketClient
         end
 
         if Time.now - last_heartbeat_time >= 10
-          send_message('{"method":"get_active_calls_count"}')
+          msg = {method: 'get_active_calls_count'}
+          send_message(msg.to_json)
           p "heartbeat"
           last_heartbeat_time = Time.now
         end
 
         if !end_call_time.nil?
           if Time.now > end_call_time
-            send_message('{"method":"close_call", "call_id":"' + call_id + '"}')
+            msg = {
+              method: 'close_call',
+              call_id: call_id
+            }
+            send_message(msg.to_json)
           end
           end_call_time = nil
         end
@@ -123,8 +129,16 @@ class WebSocketClient
               begin_string = "sip:"
               end_string = "@"
               call_type = dat["called_uri"].to_s[/#{begin_string}(.*?)#{end_string}/m, 1] rescue ""
-              send_message('{"method":"subscribe_call", "call_id":"' + call_id + '"}')
-              send_message('{"method":"get_call", "call_id":"' + call_id + '"}')
+              msg = {
+                method: 'subscribe_call',
+                call_id: call_id
+              }
+              send_message(msg.to_json)
+              msg = {
+                method: 'get_call',
+                call_id: call_id
+              }
+              send_message(msg.to_json)
               response = HTTParty.post(DC_CHATBOT_URL + "welcome", 
                             headers: STATIC_HEADERS, 
                             body: { call_id: call_id, 
@@ -148,11 +162,20 @@ class WebSocketClient
                 chat_response.each do |item|
                   case item["action"].to_s
                   when "send"
-                    send_message('{"method":"send", "call_id":"' + call_id + '", "message":"' + item["message"].to_s.gsub("\n","<br>").gsub("\\","") + '"}')
+                    msg = {
+                      method: 'send',
+                      call_id: call_id,
+                      message: item["message"].to_s.gsub("\n","<br>").gsub("\\","")
+                    }
+                    send_message(msg.to_json)
                   when "wait"
                     sleep(item["time"].to_i) rescue sleep 5
                   when "end"
-                    send_message('{"method":"close_call", "call_id":"' + call_id + '"}')
+                    msg = {
+                      method: 'close_call',
+                      call_id: call_id
+                    }
+                    send_message(msg.to_json)
                   when "end20"
                     end_call_time = Time.now + 120
                   else
@@ -171,13 +194,20 @@ class WebSocketClient
               end_string = "@"
               call_type = dat["call"]["called_uri"].to_s[/#{begin_string}(.*?)#{end_string}/m, 1] rescue ""
               if call_type != "" && call_id != ""
+                msg = {
+                  method: 'send',
+                  call_id: call_id,
+                }
                 case call_type.to_s
                 when "122"
-                    send_message('{"method":"send", "call_id":"' + call_id + '", "message":"Einsatztyp: Feuerwehr"}')
+                  msg["message"] = 'Einsatztyp: Feuerwehr'
+                  send_message(msg.to_json)
                 when "133"
-                    send_message('{"method":"send", "call_id":"' + call_id + '", "message":"Einsatztyp: Polizei"}')
+                  msg["message"] = 'Einsatztyp: Polizei'
+                  send_message(msg.to_json)
                 when "144"
-                    send_message('{"method":"send", "call_id":"' + call_id + '", "message":"Einsatztyp: Rettung"}')
+                  msg["message"] = 'Einsatztyp: Rettung'
+                  send_message(msg.to_json)
                 end
               end
               dat["code"] = 200

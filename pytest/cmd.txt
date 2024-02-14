@@ -1,1 +1,1 @@
-SC_HOST=https://dec112-chatbot.data-container.net pytest
+SC_HOST=https://chatbot.data-container.net pytest

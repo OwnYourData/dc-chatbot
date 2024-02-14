@@ -71,3 +71,5 @@ yarn-debug.log*
 
 # don't share internal config
 /pytest/config/*
+
+.DS_Store
