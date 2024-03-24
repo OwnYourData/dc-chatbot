@@ -164,24 +164,27 @@ module ChatbotHelper
             end unless message_array.nil?
             nil
         end
-        conv << {"role": "user", "content": msg.to_s}
-
-        if !call_ended
-            # if !test_call
-                oai_params = {
-                      model: OAI_MODEL, 
-                      messages: conv,
-                      temperature: 1,
-                      max_tokens: 1024,
-                      top_p: 1,
-                      frequency_penalty: 0,
-                      presence_penalty: 0
-                    }
-                response = $oai_client.chat(parameters: oai_params)
-                return_msg = response["choices"].first["message"]["content"] rescue "error"
-            # else
-            #     return_msg = ""
-            # end
+        if !string_start_with_config(msg, "chatbot_filter.txt")
+            conv << {"role": "user", "content": msg.to_s}
+            if !call_ended
+                # if !test_call
+                    oai_params = {
+                          model: OAI_MODEL, 
+                          messages: conv,
+                          temperature: 1,
+                          max_tokens: 1024,
+                          top_p: 1,
+                          frequency_penalty: 0,
+                          presence_penalty: 0
+                        }
+                    response = $oai_client.chat(parameters: oai_params)
+                    return_msg = response["choices"].first["message"]["content"] rescue "error"
+                # else
+                #     return_msg = ""
+                # end
+            end
+        else
+            return_msg = ""
         end
         return return_msg.to_s
     end

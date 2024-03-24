@@ -85,7 +85,7 @@ class WebSocketClient
       default_lang = ENV['CHAT_LANG'] || 'de'
       lang = default_lang.clone
       @frame = WebSocket::Frame::Incoming::Client.new
-      end_call_time = nil
+      end_call_times = {}
       dc_headers = nil
       last_heartbeat_time = Time.now
       last_dc_headers_time = 0
@@ -106,16 +106,24 @@ class WebSocketClient
           last_heartbeat_time = Time.now
         end
 
-        if !end_call_time.nil?
-          if Time.now > end_call_time
-            msg = {
-              method: 'close_call',
-              call_id: call_id
-            }
-            send_message(msg.to_json)
+        new_end_call_times = {}
+        end_call_times.each do |call_id, end_call_time|
+          if !end_call_time.nil?
+            if Time.now > end_call_time
+              msg = {
+                method: 'close_call',
+                call_id: call_id
+              }
+              send_message(msg.to_json)
+            else
+              new_end_call_times[call_id] = end_call_time
+            end
+          else
+            new_end_call_times[call_id] = nil
           end
-          end_call_time = nil
         end
+        end_call_times = new_end_call_times.clone
+
         @frame << data
         while msg = @frame.next
           dat = JSON.parse(msg.data)
@@ -124,8 +132,9 @@ class WebSocketClient
             case dat["event"].to_s
             when "new_call"
               call_id = dat["call_id"].to_s
+              p "new_call-event for id: " + call_id
               lang = dat["lang"] || default_lang.clone
-              end_call_time = nil
+              end_call_times[call_id] = nil
               begin_string = "sip:"
               end_string = "@"
               call_type = dat["called_uri"].to_s[/#{begin_string}(.*?)#{end_string}/m, 1] rescue ""
@@ -139,14 +148,15 @@ class WebSocketClient
                 call_id: call_id
               }
               send_message(msg.to_json)
-              response = HTTParty.post(DC_CHATBOT_URL + "welcome", 
-                            headers: STATIC_HEADERS, 
-                            body: { call_id: call_id, 
-                                    lang: lang, 
-                                    calltype: call_type}.to_json )
+              # response = HTTParty.post(DC_CHATBOT_URL + "welcome", 
+              #               headers: STATIC_HEADERS, 
+              #               body: { call_id: call_id, 
+              #                       lang: lang, 
+              #                       calltype: call_type}.to_json )
               write = true
             when "new_message"
               call_id = dat["call_id"].to_s
+              p "new message: " + call_id.to_s
               msg = dat["message"]["texts"].join("\n").strip rescue ""
               origin = dat["message"]["origin"].strip rescue ""
               if origin == "remote" && msg != ""
@@ -177,7 +187,8 @@ class WebSocketClient
                     }
                     send_message(msg.to_json)
                   when "end20"
-                    end_call_time = Time.now + 120
+                    end_call_times[call_id] = Time.now + 120
+                    p Time.now.to_s + " - set end_call_time to " + end_call_times[call_id].to_s
                   else
                     p "unknown action '" + item["action"].to_s + "'"
                   end

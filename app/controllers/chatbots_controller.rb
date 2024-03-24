@@ -31,34 +31,36 @@ class ChatbotsController < ApplicationController
         content = []
         # check if within normal flow of conversation
         return_msg = dec112_reply(params[:message], params[:call_id], params[:lang])
-        if !return_msg.start_with?("//call_ended") && !return_msg.start_with?("//call_termi")
-            content = [{"action": "send", "message": return_msg}]
-        end
+        if return_msg.to_s != ""
+            if !return_msg.start_with?("//call_ended") && !return_msg.start_with?("//call_termi")
+                content = [{"action": "send", "message": return_msg}]
+            end
 
-        # end of conversation and preconfigured questions are asked
-        if return_msg.start_with?("//call_ended") || return_msg.start_with?("//call_termi") || string_include_config(return_msg, "chatbot_end_call.txt")
-            if content.length > 0
-                content << {"action": "wait", "time": 2}
-            end
-            if return_msg.start_with?("//call_ended") || return_msg.start_with?("//call_termi")
-                if return_msg == "//call_ended"
-                    call_id = "1"
-                else
-                    call_id = (return_msg[13..-1].to_i + 1).to_s
+            # end of conversation and preconfigured questions are asked
+            if return_msg.start_with?("//call_ended") || return_msg.start_with?("//call_termi") || string_include_config(return_msg, "chatbot_end_call.txt")
+                if content.length > 0
+                    content << {"action": "wait", "time": 2}
                 end
-            else
-                call_id = "1"
-            end
-            question_txt = read_question(call_id, params[:lang].to_s)
-            if question_txt.to_s == ""
-                return_msg = read_texblock("goodbye", params[:lang].to_s)
-                content << {"action": "send", "message": return_msg}
-                content << {"action": "wait", "time": 3}
-                content << {"action": "end"}
-            else
-                content << {"action": "send", "message": question_txt}
-                if return_msg.start_with?("//call_termi")
-                    content << {"action": "end20"}
+                if return_msg.start_with?("//call_ended") || return_msg.start_with?("//call_termi")
+                    if return_msg == "//call_ended"
+                        call_id = "1"
+                    else
+                        call_id = (return_msg[13..-1].to_i + 1).to_s
+                    end
+                else
+                    call_id = "1"
+                end
+                question_txt = read_question(call_id, params[:lang].to_s)
+                if question_txt.to_s == ""
+                    return_msg = read_texblock("goodbye", params[:lang].to_s)
+                    content << {"action": "send", "message": return_msg}
+                    content << {"action": "wait", "time": 3}
+                    content << {"action": "end"}
+                else
+                    content << {"action": "send", "message": question_txt}
+                    if return_msg.start_with?("//call_termi")
+                        content << {"action": "end20"}
+                    end
                 end
             end
         end

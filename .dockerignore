@@ -1,4 +1,4 @@
 tmp
 kubernetes
-pytest/dist
-pytest/node_modules
+pytest
+ng112-js-tester

@@ -58,3 +58,4 @@ conv = [{"time": @chat.first.created_at.strftime("%H:%M:%S"), "role": "system", 
     end unless message_array.nil?
     nil
 end
+{"identifier": call_id, "rating": nil, "conversation": conv.sort_by { |e| e["time"] }}

@@ -9,3 +9,8 @@ Auf Wiedersehen
 Passen Sie auf sich auf!
 Hab einen schönen Tag
 Der Notruf wurde beendet.
+System hat den Notruf beendet
+rufe bitte erneut an
+Notruf wurde von der Leitstelle beendet
+Notruf ist beendet
+hat den Notruf beendet
